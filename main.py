@@ -90,6 +90,7 @@ async def update_product(ref: int, product: schemas.Products, db: Session = Depe
     product_in.price=product.price
     product_in.qty=product.qty
     product_in.category=product.category
+    product_in.url=product.url
     db.commit()
     return product_in
 

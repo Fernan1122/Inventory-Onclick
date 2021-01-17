@@ -24,3 +24,4 @@ class Products(Base):
     price = Column(Integer, index=True)
     qty = Column(Integer, index=True)
     category = Column(String, index=True)
+    url = Column(String, index=True)

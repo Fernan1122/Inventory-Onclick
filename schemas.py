@@ -26,6 +26,7 @@ class Products(ProductsBase):
     price: int
     qty: int
     category: str
+    url: str
 
     class Config:
         orm_mode = True
