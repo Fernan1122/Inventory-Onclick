@@ -12,7 +12,7 @@ class ProductsBase(BaseModel):
     price: int
     qty: int
     category: str
-
+    url: str
 
 class ProductsCreate(ProductsBase):
     pass
