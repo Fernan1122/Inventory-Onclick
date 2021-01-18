@@ -34,6 +34,13 @@ class Products(ProductsBase):
 class ProductsQTY(BaseModel):
     qty: int
 
+class ProductsUpdate(BaseModel):
+    name: str
+    date: date
+    price: int
+    qty: int
+    category: str
+
 class UserBase(BaseModel):
     username: str
     email: str

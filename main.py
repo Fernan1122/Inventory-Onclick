@@ -96,15 +96,13 @@ async def update_qty(ref: int, product: schemas.ProductsQTY, db: Session = Depen
     return product_in
 
 @app.put("/products/", response_model=schemas.Products)
-async def update_product(ref: int, product: schemas.Products, db: Session = Depends(get_db)):
+async def update_product(ref: int, product: schemas.ProductsUpdate, db: Session = Depends(get_db)):
     product_in = crud.get_product_id(db, ref)
-    product_in.ref=product.ref
     product_in.name=product.name
     product_in.date=product.date
     product_in.price=product.price
     product_in.qty=product.qty
     product_in.category=product.category
-    product_in.url=product.url
     db.commit()
     return product_in
 
