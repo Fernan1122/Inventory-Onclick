@@ -73,6 +73,20 @@ async def read_products(db: Session = Depends(get_db)):
     products = crud.get_products(db)
     return products
 
+@app.get("/products/{ref}", response_model=schemas.Products)
+async def read_products_by_ref(ref:int, db: Session = Depends(get_db)):
+    products = crud.get_product_id(db, ref=ref)
+    if products is None:
+        raise HTTPException(status_code=404, detail="Producto no encontrado.")
+    return products
+
+@app.get("/products/{ref}/qty")
+async def read_qty_by_ref(ref:int, db: Session = Depends(get_db)):
+    products = crud.get_product_id(db, ref=ref)
+    if products is None:
+        raise HTTPException(status_code=404, detail="Producto no encontrado.")
+    products.qty
+    return products.qty
 
 @app.put("/products/{ref}", response_model=schemas.Products)
 async def update_qty(ref: int, product: schemas.ProductsQTY, db: Session = Depends(get_db)):
