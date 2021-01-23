@@ -107,9 +107,9 @@ async def update_product(ref: int, product: schemas.ProductsUpdate, db: Session 
     return product_in
 
 @app.put("/users/")
-async def recover_pass(username: str, user: schemas.UserRecover, db: Session = Depends(get_db)): 
-    recover = crud.get_user_by_username(db, username=username)
-    recover.user_password = user.user_password
+async def recover_pass(password: str, user: schemas.UserRecover, db: Session = Depends(get_db)): 
+    recover = crud.get_user_by_key(db, password=password)
+    recover.user_password = generate_password_hash(user.user_password)
     db.commit()
     return {"Pass_Recovered": True}
 
@@ -123,22 +123,24 @@ async def delete_products(ref: int, db: Session = Depends(get_db)):
     return {"Delete successfull": True}
 
 
-@app.get("/recovery/", response_model=schemas.User)
+@app.get("/recovery/")
 async def get_email(mail: str, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=mail)
     if db_user is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    msg = MIMEMultipart()
-    message = "Recupere su cuenta accediendo al siguiente enlace:"   
-    password = "Inventory-Onclick123"
-    msg['From'] = "inventory.onclick@gmail.com"
-    msg['To'] = db_user.email
-    msg['Subject'] = "Recuperacion de Credenciales Inventory Onclick"
-    msg.attach(MIMEText(message, 'plain'))
-    server = smtplib.SMTP('smtp.gmail.com: 587')
-    server.starttls()
-    server.login(msg['From'], password)
-    server.sendmail(msg['From'], msg['To'], msg.as_string())
-    server.quit()
-    return {"Existe": True}
+    else:
+        msg = MIMEMultipart()
+        message = ("Recupere su cuenta accediendo al siguiente enlace: \n \n https://inventoryonclick.herokuapp.com/recuperar/"+db_user.user_password +"\n \n")
+        password = "Inventory-Onclick123"
+        msg['From'] = "inventory.onclick@gmail.com"
+        msg['To'] = db_user.email
+        msg['Subject'] = "Recuperacion de Credenciales Inventory Onclick"
+        msg.attach(MIMEText(message, 'plain'))
+        server = smtplib.SMTP('smtp.gmail.com: 587')
+        server.starttls()
+        server.login(msg['From'], password)
+        server.sendmail(msg['From'], msg['To'], msg.as_string())
+        server.quit()
+
+    return db_user.user_password
 
